@@ -5,6 +5,9 @@ Kitchen is an alternative to the default chef-server.  It allows you to manage y
 
 Kitchen is targeting Chef 0.10, as it introduces several API changes as well as the concept of "environments".
 
+Goals
+-----
+
 Kitchen was born out of a realization that the traditional chef-server didn't fit the type of workflow I wanted.
 
 * I wanted to version my infrastructure instead of individual cookbooks.
@@ -23,3 +26,18 @@ We aimed to solve these problems by:
 It is under active development, but still very rough under the edges. Right now is is simply a prototype. A lot of the code is still pretty ugly in parts, as it was focused on "what do I gotta do to make this sort of work".  Refinement and actual specs are coming soon.
 
 As Chef 0.10 is still just a beta, it may also be changing as well.
+
+Contributing
+------------
+
+* Fork the project.
+* Make your feature addition or bug fix.
+* Add tests for it. This is important.
+* Commit, do not mess with Rakefile, version, or history.
+  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+* Send me a pull request. Bonus points for topic branches.
+
+Copyright
+---------
+
+Copyright (c) 2011 Ken Robertson. See LICENSE for details.
