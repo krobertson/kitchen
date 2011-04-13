@@ -1,11 +1,14 @@
 class Api::EnvironmentsController < Api::ApiController
 
+  before_filter :authenticate_request
+  before_filter :ensure_admin, :only => [ :create, :update, :destroy ]
+
   def index
-    render :json => Environment.collection.find.inject({}) { |s,c| s[c['name']] = api_environment_url(c['name']); s }
+    render :json => Environment.all.inject({}) { |s,e| s[e.name] = api_environment_url(e.name); s }
   end
 
   def create
-    environment = Environment.new(parsed_object)
+    environment = Environment.new(:name => parsed_object['name'], :properties => parsed_object)
     if environment.save
       render :json => { 'uri' => api_environment_url(environment.name) }, :status => 201
     else
@@ -14,9 +17,10 @@ class Api::EnvironmentsController < Api::ApiController
   end
 
   def update
-    environment = Environment.find(:first, :conditions => { :name => params[:id] })
+    raise MethodNotAllowed if params[:id] == "_default"
+    environment = Environment.where(:name => params[:id]).first
 
-    if environment.save
+    if environment.update_attributes(:properties => parsed_object)
       render :status => 200, :nothing => true
     else
       render :status => 409, :nothing => true
@@ -24,28 +28,20 @@ class Api::EnvironmentsController < Api::ApiController
   end
 
   def show
-    environment = Environment.find(:first, :conditions => { :name => params[:id] })
-    render :json => environment
+    environment = Environment.where(:name => params[:id]).first
+    render :json => Chef::Environment.json_create(environment.properties.merge('name' => environment.name))
   end
 
   def destroy
-    environment = Environment.find(:first, :conditions => { :name => params[:id] })
+    raise MethodNotAllowed if params[:id] == "_default"
+    environment = Environment.where(:name => params[:id]).first
     environment.destroy
     render :status => 200, :nothing => true
   end
 
   def cookbook_versions
-    environment = Environment.find(:first, :conditions => { :name => params[:id] })
+    environment = Environment.where(:name => params[:id]).first
 
-#    run_list = Chef::RunList.new
-#    params[:run_list].each do |run_list_item_string|
-#      run_list << run_list_item_string
-#    end
-
-#    expanded_run_list = RunListExpansionFromGit.new(environment.name, run_list.run_list_items, environment.branch)
-#    expanded_run_list.expand
-
-#    versions = expanded_run_list.recipes.inject({}) do |res, name|
     versions = Repository.cookbooks(environment.branch).inject({}) do |res, name|
       name = name.split('::',2).first
       cookbook = Cookbook.new(environment.branch, name)

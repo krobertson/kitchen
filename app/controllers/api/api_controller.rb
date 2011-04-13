@@ -2,14 +2,11 @@ require "mixlib/authentication/signatureverification"
 
 class Api::ApiController < ApplicationController
 
-  class NotFound < Exception
-  end
-
-  rescue_from NotFound do |ex|
+  rescue_from Api::ErrorResponse do |ex|
     if request.accept =~ /application\/json/
-      render :json => { "error" => ex.message }, :status => 404
+      render :json => { "error" => ex.message }, :status => ex.code
     else
-      render :nothing => true, :status => 404
+      render :text => ex.message, :status => ex.code
     end
   end
 

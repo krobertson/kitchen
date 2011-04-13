@@ -11,3 +11,12 @@ end
 Factory.define :client do |f|
   f.name 'test_client'
 end
+
+Factory.define :default_environment do |f|
+  f.name '_default'
+  f.branch 'master'
+end
+
+Factory.define :environment do |f|
+  f.name 'test_environment'
+end
