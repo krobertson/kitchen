@@ -3,9 +3,10 @@ require 'chef/certificate'
 class Client
   include Mongoid::Document
 
-  field :name
-  field :admin
-  field :public_key
+  field :name, :type => String
+  field :public_key, :type => String
+  field :admin, :type => Boolean, :default => false
+  field :validator, :type => Boolean, :default => false
 
   index :name, :unique => true
 

@@ -2,9 +2,6 @@ require "mixlib/authentication/signatureverification"
 
 class Api::ApiController < ApplicationController
 
-  before_filter :authenticate_every
-
-
   class NotFound < Exception
   end
 
@@ -16,8 +13,11 @@ class Api::ApiController < ApplicationController
     end
   end
 
-
   protected
+
+  def current_user
+    @current_user
+  end
 
   def parsed_object
     return @parsed_object if @parsed_object
@@ -25,11 +25,20 @@ class Api::ApiController < ApplicationController
     @parsed_object = JSON.parse(request.body.read).to_hash
   end
 
+
   def ensure_admin
-    head 401 unless @auth_user.admin?
+    head 401 unless current_client.admin?
   end
 
-  def authenticate_every
+  def ensure_admin_or_validator
+    head 401 unless current_client.admin? || current_client.validator?
+  end
+
+  def ensure_admin_or_requestor
+    head 401 unless current_client.admin? || current_client.name == params[:id]
+  end
+
+  def authenticate_request
     begin
       # Raises an error if required auth headers are missing
       authenticator = Mixlib::Authentication::SignatureVerification.new(request)
@@ -41,7 +50,7 @@ class Api::ApiController < ApplicationController
       user_key = OpenSSL::PKey::RSA.new(user.public_key)
 
       # Store this for later..
-      @auth_user = user
+      @current_client = user
       authenticator.authenticate_request(user_key)
     rescue Mixlib::Authentication::MissingAuthenticationHeader => e
       puts "Authentication failed: #{e.class.name}: #{e.message}\n#{e.backtrace.join("\n")}"

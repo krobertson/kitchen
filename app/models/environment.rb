@@ -1,7 +1,7 @@
 class Environment
   include Mongoid::Document
 
-  field :name
+  field :name, :type => String
 
   index :name, :unique => true
 end
