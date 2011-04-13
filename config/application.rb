@@ -2,7 +2,7 @@ require File.expand_path('../boot', __FILE__)
 
 require "action_controller/railtie"
 require "action_mailer/railtie"
-require "active_resource/railtie"
+require 'mongoid/railtie'
 
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
@@ -10,7 +10,7 @@ Bundler.require(:default, Rails.env) if defined?(Bundler)
 
 module Kitchen
   class Application < Rails::Application
-    config.mongoid.logger = Logger.new($stdout, :warn)
+    #config.mongoid.logger = Logger.new($stdout, :warn)
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -40,7 +40,13 @@ module Kitchen
     # config.i18n.default_locale = :de
 
     # JavaScript files you want as :defaults (application.js is always included).
-    # config.action_view.javascript_expansions[:defaults] = %w(jquery rails)
+    config.action_view.javascript_expansions[:defaults] = %w(jquery rails form)
+
+    config.generators do |g|
+      g.orm             :mongoid
+      g.template_engine :haml
+      g.test_framework  :rspec, :fixture => false
+    end
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
