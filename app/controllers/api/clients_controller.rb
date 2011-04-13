@@ -10,9 +10,6 @@ class Api::ClientsController < Api::ApiController
   end
 
   def create
-    client = Client.where(:name => params[:name]).first
-    render :status => 409, :text => "Client with name #{client.name} is already taken" and return if client
-
     client = Client.new({ :name => params[:name], :admin => current_client.admin? ? params[:admin] : false })
     client.create_keys
 

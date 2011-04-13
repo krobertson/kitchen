@@ -10,6 +10,8 @@ class Client
 
   index :name, :unique => true
 
+  validates_uniqueness_of :name
+
   def create_keys
     results = Chef::Certificate.gen_keypair(self.name)
     self.public_key = results[0].to_s.chomp
