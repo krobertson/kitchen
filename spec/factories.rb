@@ -20,3 +20,7 @@ end
 Factory.define :environment do |f|
   f.name 'test_environment'
 end
+
+Factory.define :node do |f|
+  f.name 'test_node'
+end
