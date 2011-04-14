@@ -1,0 +1,5 @@
+repository_path: spec/git-repo/.git
+host: localhost
+git:
+  cookbooks_directory: cookbooks
+  roles_directory: roles

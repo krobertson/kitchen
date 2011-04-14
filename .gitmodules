@@ -1,0 +1,3 @@
+[submodule "spec/git-repo"]
+	path = spec/git-repo
+	url = git://github.com/krobertson/kitchen-chef-test.git

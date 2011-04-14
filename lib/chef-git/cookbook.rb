@@ -122,7 +122,6 @@ module ChefGit
       v.manifest
       v.name = @cookbook
       v.manifest['name'] = @cookbook
-
       v
     end
 
