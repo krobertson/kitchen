@@ -3,8 +3,8 @@ class Api::CookbooksController < Api::ApiController
   def index
     cookbooks = {}
 
-    Repository.branches.each do |branch|
-      Repository.cookbooks(branch).each do |cookbook|
+    ChefGit.branches.each do |branch|
+      ChefGit::Cookbooks.get_cookbooks(branch).each do |cookbook|
         cookbooks[cookbook] ||= { :url => api_cookbook_url(cookbook), :versions => [] }
         cookbooks[cookbook][:versions] << { :url => version_api_cookbook_url(cookbook, branch), :version => branch }
       end
@@ -16,8 +16,8 @@ class Api::CookbooksController < Api::ApiController
   def show
     cookbook = { :url => api_cookbook_url(params[:id]), :versions => [] }
 
-    Repository.branches.each do |branch|
-      next unless Repository.cookbooks(branch).include?(params[:id])
+    ChefGit.branches.each do |branch|
+      next unless ChefGit::Cookbooks.get_cookbooks(branch).include?(params[:id])
       cookbook[:versions] << { :url => version_api_cookbook_url(params[:id], branch), :version => branch }
     end
 
@@ -25,26 +25,17 @@ class Api::CookbooksController < Api::ApiController
   end
 
   def version
-    cookbook = Cookbook.new(params[:version], params[:id])
-    manifest = cookbook.manifest
+    cookbook = ChefGit::Cookbook.new(params[:version], params[:id])
 
-    manifest.generate_manifest_with_urls do |o|
-      path = Chef::CookbookVersion.cookbook_file_for_checksum(o[:checksum])
-      path.gsub!(/^\/#{params[:version]}\/#{params[:id]}\//, '')
+    manifest = cookbook.generate_manifest_with_urls do |path|
       file_api_cookbook_url(:path => path)
     end
-
-
-    puts
-    puts "HEY"
-    puts manifest.to_json
-    puts
 
     render :json => manifest
   end
 
   def file
-    blob = Repository.cookbook_file(params[:version], params[:id], params[:path])
+    blob = ChefGit::Cookbooks.get_cookbook_file(params[:version], params[:id], params[:path])
     render :nothing => true, :status => 404 and return unless blob.is_a?(Grit::Blob)
     send_data blob.data, :filename => blob.name
   end

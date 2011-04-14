@@ -15,6 +15,7 @@ module ChefGit
     def generate_manifest_with_urls
       generate_manifest.generate_manifest_with_urls do |o|
         path = Chef::CookbookVersion.cookbook_file_for_checksum(o[:checksum])
+        path.gsub!(/^\/#{@branch}\/#{@cookbook}\//, '')
         yield path
       end
     end
