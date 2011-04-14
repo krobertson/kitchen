@@ -2,6 +2,8 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.6'
 
+gem 'appconfig', :require => 'app_config'
+
 gem "mongoid", "~> 2.0.0"
 gem "bson_ext"
 

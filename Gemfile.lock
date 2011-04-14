@@ -28,6 +28,7 @@ GEM
       activemodel (= 3.0.6)
       activesupport (= 3.0.6)
     activesupport (3.0.6)
+    appconfig (0.1.1)
     arel (2.0.9)
     bson (1.3.0)
     bson_ext (1.3.0)
@@ -148,6 +149,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  appconfig
   bson_ext
   chef (= 0.10.0.beta.9)
   database_cleaner (~> 0.6.0)
