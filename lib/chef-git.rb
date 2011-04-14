@@ -1,9 +1,9 @@
 module ChefGit
-  def self.REPOSITORY
-    @repo ||= Grit::Repo.new(File.expand_path(AppConfig.git.repository_path))
+  def self.repository
+    @repo ||= Grit::Repo.new(File.expand_path(AppConfig.repository_path))
   end
 
   def self.branches
-    REPOSITORY.heads.map(&:name)
+    repository.heads.map(&:name)
   end
 end

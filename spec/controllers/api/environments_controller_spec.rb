@@ -3,13 +3,13 @@ require 'spec_helper'
 describe Api::EnvironmentsController do
   before :each do
     @controller.stub(:authenticate_request)
+
+    admin = Factory(:admin_client)
+    @controller.stub(:current_client).and_return(admin)
   end
 
   describe '#create' do
     it 'should create an environment' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       expect {
         request.stub(:body).and_return(StringIO.new({:name => 'Sample1'}.to_json))
         post :create, nil, :content_type => 'application/json'
@@ -22,9 +22,6 @@ describe Api::EnvironmentsController do
     end
 
     it 'should not create a duplicate' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       env = Factory(:environment)
 
       expect {
@@ -36,9 +33,6 @@ describe Api::EnvironmentsController do
     end
 
     it 'should allow you to set arbitruary values' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       request.stub(:body).and_return(StringIO.new({:name => 'Sample1', :branch => 'awesome', :foo => 'bar'}.to_json))
       post :create, nil, :content_type => 'application/json'
 
@@ -53,9 +47,6 @@ describe Api::EnvironmentsController do
 
   describe '#update' do
     it 'should update an existing environment' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       env = Factory(:environment, :properties => { 'foo' => 'bar' })
       env.properties['foo'].should == 'bar'
 
@@ -71,9 +62,6 @@ describe Api::EnvironmentsController do
 
   describe '#show' do
     it 'should return an environment' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       env = Factory(:environment, :properties => { 'foo' => 'bar' })
 
       get :show, :id => env.name
@@ -88,9 +76,6 @@ describe Api::EnvironmentsController do
 
   describe '#destroy' do
     it 'should remove an environment' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       env = Factory(:environment)
 
       expect {

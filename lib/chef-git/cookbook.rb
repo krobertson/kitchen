@@ -22,7 +22,7 @@ module ChefGit
     protected
 
     def generate_settings
-      tree = ChefGit::REPOSITORY.tree(@branch) / AppConfig.git.cookbooks_directory / @cookbook
+      tree = ChefGit.repository.tree(@branch) / AppConfig.git.cookbooks_directory / @cookbook
       @ignore_regexes = Array.new
 
       @settings = { 
@@ -109,7 +109,7 @@ module ChefGit
       metadata = Chef::Cookbook::Metadata.new(v)
       @settings[:metadata_filenames].each do |meta_json|
         begin
-          metadata.from_json((ChefGit::REPOSITORY.tree(@branch)/AppConfig.git.cookbooks_directory/meta_json).data)
+          metadata.from_json((ChefGit.repository.tree(@branch)/AppConfig.git.cookbooks_directory/meta_json).data)
         rescue JSON::ParserError
           Chef::Log.fatal("Couldn't parse JSON in " + meta_json)
           raise

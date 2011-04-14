@@ -3,13 +3,13 @@ require 'spec_helper'
 describe Api::NodesController do
   before :each do
     @controller.stub(:authenticate_request)
+
+    admin = Factory(:admin_client)
+    @controller.stub(:current_client).and_return(admin)
   end
 
   describe '#create' do
     it 'should create anode' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       expect {
         request.stub(:body).and_return(StringIO.new({:name => 'Sample1'}.to_json))
         post :create, nil, :content_type => 'application/json'
@@ -22,9 +22,6 @@ describe Api::NodesController do
     end
 
     it 'should not create a duplicate' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       node = Factory(:node)
 
       expect {
@@ -36,9 +33,6 @@ describe Api::NodesController do
     end
 
     it 'should allow you to set arbitruary values' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       request.stub(:body).and_return(StringIO.new({:name => 'Sample1', :branch => 'awesome', :foo => 'bar'}.to_json))
       post :create, nil, :content_type => 'application/json'
 
@@ -53,9 +47,6 @@ describe Api::NodesController do
 
   describe '#update' do
     it 'should update an existing node' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       node = Factory(:node, :properties => { 'foo' => 'bar' })
       node.properties['foo'].should == 'bar'
 
@@ -71,9 +62,6 @@ describe Api::NodesController do
 
   describe '#show' do
     it 'should return a node' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       node = Factory(:node, :properties => { 'foo' => 'bar' })
 
       get :show, :id => node.name
@@ -88,9 +76,6 @@ describe Api::NodesController do
 
   describe '#destroy' do
     it 'should remove a node' do
-      admin = Factory(:admin_client)
-      @controller.stub(:current_client).and_return(admin)
-
       node = Factory(:node)
 
       expect {
